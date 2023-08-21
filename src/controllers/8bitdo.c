@@ -5,6 +5,8 @@
 #include "8bitdo.h"
 #include "hid_parser.h"
 
+//#define _DEBUG_MAPPER_
+
 bool map_8bitDo_M30(uint8_t instance, uint8_t *id, controler_type *type, void **res, void *ctrl_v)
  {
   hid_controller *ctrl =(hid_controller*)ctrl_v;
@@ -18,12 +20,12 @@ bool map_8bitDo_M30(uint8_t instance, uint8_t *id, controler_type *type, void **
   result->down = btn->ABS_Y >= 196;
   result->left = btn->ABS_X <= 64;
   result->right = btn->ABS_X >= 196;
-  result->X = btn->TOP2 || btn->THUMB2;
-  result->P = btn->BASE6 || btn->BASE5;
+  result->X = btn->BASE5;
+  result->P = btn->BASE6 || btn->TOP2;
   result->A = btn->TRIGGER;
   result->B = btn->THUMB;
   result->C = btn->BASE2;
-  result->L = btn->TOP || btn->BASE3;
+  result->L = btn->BASE3 || btn->TOP;
   result->R = btn->BASE || btn->BASE4;
 
   if (ctrl->hasHat[ctrl->index]) {

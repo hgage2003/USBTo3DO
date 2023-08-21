@@ -20,8 +20,8 @@ bool map_ds4(uint8_t instance, uint8_t *id, controler_type *type, void **res, vo
   result->down = btn->ABS_Y >= 196;
   result->left = btn->ABS_X <= 64;
   result->right = btn->ABS_X >= 196;
-  result->X = btn->TOP || btn->BASE4;
-  result->P = btn->BASE3 || btn->BASE3;
+  result->X = btn->BASE3;
+  result->P = btn->BASE4 || btn->TOP;
   result->A = btn->TRIGGER;
   result->B = btn->THUMB;
   result->C = btn->THUMB2;

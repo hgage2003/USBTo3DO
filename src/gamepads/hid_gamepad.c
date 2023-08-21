@@ -44,6 +44,7 @@
 #include "sixaxis.h"
 
 //#define _DEBUG_MAPPER_
+//#define TU_LOG1 printf
 
 /* From https://www.kernel.org/doc/html/latest/input/gamepad.html
           ____________________________              __
@@ -89,8 +90,8 @@ static hid_controller currentController[CFG_TUH_DEVICE_MAX] = {0};
 uint8_t *last_report[CFG_TUH_DEVICE_MAX] = {NULL};
 int16_t last_len[CFG_TUH_DEVICE_MAX] = {-1};
 
-#define NB_GAMEPAD_SUPPORTED 17
-#define NB_GAMEPAD_IN_LIST 17
+#define NB_GAMEPAD_SUPPORTED 18
+#define NB_GAMEPAD_IN_LIST 18
 static mapping_hid_3do map[NB_GAMEPAD_IN_LIST] = {
   {0x0079, 0x0011, " SWITCH CO.,LTD.", map_retroBit, NULL, NULL}, //0079:0011 DragonRise Inc. Gamepad
   {0x0079, 0x0011, NULL, map_dragonRise, NULL, NULL}, //0079:0011 DragonRise Inc. Gamepad
@@ -102,6 +103,7 @@ static mapping_hid_3do map[NB_GAMEPAD_IN_LIST] = {
   {0x044f, 0xb109, NULL, map_hotas_x_ps3, NULL, NULL}, //044f:b109 ThrustMaster, Inc. T.Flight Hotas PS3
   {0x044f, 0xb66a, NULL, map_t80_pc, NULL, NULL}, //044f:b66a ThrustMaster, Inc. Thrustmaster T80
   {0x2dc8, 0x5006, NULL, map_8bitDo_M30, NULL, NULL}, //8bitDo  M30 controler in dinput mode (B pressed at power up)
+  {0x2dc8, 0x3104, NULL, map_8bitDo_M30, NULL, NULL}, //8bitDo wireless adapter for M30 controler in dinput mode (press Select+Left for 3 seconds)
   {0x054c, 0x0cda, NULL, map_ps_classic, NULL, NULL}, // 054c:0cda Sony Corp. PlayStation Classic controller
   {0x054c, 0x09cc, NULL, map_ds4, NULL, NULL}, //Dualshock4
   {0x054c, 0x05c4, NULL, map_ds4, NULL, NULL}, //Dualshock4
@@ -577,8 +579,8 @@ static void default3DOMapper(uint8_t instance, uint8_t *id, controler_type *type
       result->down = btn->ABS_Y >= 196;
       result->left = btn->ABS_X <= 64;
       result->right = btn->ABS_X >= 196;
-      result->X = btn->TOP || btn->BASE5 || btn->BASE4;
-      result->P = btn->BASE3 || btn->BASE6 || btn->BASE3;
+      result->X = btn->BASE5 || btn->BASE3;
+      result->P = btn->BASE4 || btn->BASE6 || btn->TOP;
       result->A = btn->TRIGGER;
       result->B = btn->THUMB;
       result->C = btn->THUMB2;
@@ -623,9 +625,16 @@ static void default3DOMapper(uint8_t instance, uint8_t *id, controler_type *type
       result->dy_low = dy&0x3F;
 
       #ifdef _DEBUG_MAPPER_
-      //used for mapping debug
+      /*
+      used for mapping debug
       printf("(left, middle, right, shift) (%d %d %d %d) (dX,dY)(%d %d)\n",
       result->left, result->middle, result->right, result->shift, dx, dy);
+      */
+      unsigned char* chBtn = (unsigned char*)btn;
+      for (int i = 0; i < sizeof(hid_buttons); ++i)
+          printf("%02x ",chBtn[i]);
+      printf("\n");
+      
       #endif
       *res = (void *)(result);
     }

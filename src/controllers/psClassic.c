@@ -19,8 +19,8 @@ bool map_ps_classic(uint8_t instance, uint8_t *id, controler_type *type, void **
   result->down = btn->ABS_Y > 64;
   result->left = btn->ABS_X < 64;
   result->right = btn->ABS_X > 64;
-  result->X = btn->TRIGGER || btn->BASE3;
-  result->P = btn->BASE4;
+  result->X = btn->BASE3;
+  result->P = btn->TRIGGER || btn->BASE4;
   result->A = btn->TOP;
   result->B = btn->THUMB2;
   result->C = btn->THUMB;

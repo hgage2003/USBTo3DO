@@ -185,10 +185,10 @@ static bool is3DOCompatible(hid_controller *ctrl) {
       case TYPE_JOYSTICK:
         TU_LOG1("JoyPad/Joystick report %d\n",((ctrl->nbButtons[hid] >=3) && (nbAxis >= 2)));
       if (ctrl->nbButtons[hid] < 11) {
-        int missing_buttons = 11 - ctrl->nbButtons[hid];
-        ctrl->isCompatible[hid] = true;
-        if (ctrl->axis_status[hid] & 0x3 != 0x3) ctrl->isCompatible[hid] = false;
-        if (!(ctrl->hasHat[hid] && (ctrl->nbButtons[hid] >= 7))) ctrl->isCompatible[hid] = false;
+        ctrl->isCompatible[hid] = false;
+        // compatible has at least 7 buttons and 2 axis (or hat)
+        if ((nbAxis >= 2) && (ctrl->nbButtons[hid] >= 7)) ctrl->isCompatible[hid] = true;
+        if ((ctrl->hasHat[hid]) && (ctrl->nbButtons[hid] >= 7)) ctrl->isCompatible[hid] = true;
       } else ctrl->isCompatible[hid] = true;
       break;
       case TYPE_MOUSE:
@@ -286,7 +286,7 @@ void tuh_hid_umount_cb(uint8_t dev_addr, uint8_t instance)
   memset(&currentController[instance] ,0, sizeof(hid_controller));
 }
 
-static bool HIDMapper(uint8_t* report, uint8_t len, uint8_t instance, hid_controller *ctrl) {
+static bool HIDMapper(const uint8_t* report, uint8_t len, uint8_t instance, hid_controller *ctrl) {
   bool processReport = false;
   int8_t* last_report_to_test = NULL;
   hid_buttons last_buttons;
